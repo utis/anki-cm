@@ -1,44 +1,42 @@
 import { COLOR, Chessboard, BORDER_TYPE } from "../cm-chessboard/src/Chessboard";
 
-// function send_to_terminal(m) {
-//     var myterminal=document.getElementById("myterminal");
-//     var mymessage=document.createElement("div");
-//     mymessage.appendChild(document.createTextNode(m));
-//     myterminal.appendChild(mymessage);
-// }
+function send_to_terminal(m) {
+    var myterminal=document.getElementById("myterminal");
+    var mymessage=document.createElement("div");
+    mymessage.appendChild(document.createTextNode(m));
+    myterminal.appendChild(mymessage);
+}
 
-// (function(){
-//     var oldError = console.error;
-//     var oldWarn = console.warn;
-//     var oldLog = console.log;
+(function(){
+    var oldError = console.error;
+    var oldWarn = console.warn;
+    var oldLog = console.log;
 
-//     window.onerror = function(message, source, lineno, colno, error) {
-//         send_to_terminal(message);
-//     };
+    window.onerror = function(message, source, lineno, colno, error) {
+        send_to_terminal(message);
+    };
 
-//     console.error = function(message) {
-//         send_to_terminal(message);
-//         oldError.apply(console, arguments);
-//     }
+    console.error = function(message) {
+        send_to_terminal(message);
+        oldError.apply(console, arguments);
+    }
 
-//     console.warn = function(message) {
-//         send_to_terminal(message);
-//         oldWarn.apply(console, arguments);
-//     }
+    console.warn = function(message) {
+        send_to_terminal(message);
+        oldWarn.apply(console, arguments);
+    }
 
-//     console.log = function(message) {
-//         send_to_terminal(message);
-//         oldLog.apply(console, arguments);
-//     }
-// })();
+    console.log = function(message) {
+        send_to_terminal(message);
+        oldLog.apply(console, arguments);
+    }
+})();
 
 let boards = document.getElementsByClassName("cm-board");
 
 for (element of boards) {
     createBoard(element);
 }
-
-
 
 
 function createBoard(element) {
@@ -56,7 +54,7 @@ function createBoard(element) {
 
 function boardOrientation(element, fen) {
     let override = element.dataset.orientation || 'auto';
-        console.log(override);
+
     switch (override) {
     case "white":
         return COLOR.white;
@@ -65,12 +63,13 @@ function boardOrientation(element, fen) {
     case "auto":
         const fenRegex = /(w|b) [kKqQ-]* [a-z0-9-] \d+ \d+$/;
         let match = fen.match(fenRegex);
+
         if (match[1] == "w") {
             return COLOR.white;
         } else if (match[1] == "b") {
             return COLOR.black;
         } else {
-            new Error("FEN does not contain whose turn it is in " + element);
+            new Error("FEN does not specify whose turn it is in " + element);
         }
     default:
         new Error ("data-orientation must be either 'white', 'black' or 'auto'");
