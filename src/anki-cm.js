@@ -39,19 +39,43 @@ for (element of boards) {
 }
 
 
+
+
 function createBoard(element) {
     var fen = element.textContent.trim();
     // Remove FEN string from page.
     element.innerHTML = "";
-    console.log(fen);
-    new Chessboard(element, {
+
+    let board = new Chessboard(element, {
         assetsUrl: "./",
         position: fen,
+        orientation: boardOrientation(element, fen),
         style: { pieces: { file: "_standard.svg", } },
     });
 }
 
-
+function boardOrientation(element, fen) {
+    let override = element.dataset.orientation || 'auto';
+        console.log(override);
+    switch (override) {
+    case "white":
+        return COLOR.white;
+    case "black":
+        return COLOR.black;
+    case "auto":
+        const fenRegex = /(w|b) [kKqQ-]* [a-z0-9-] \d+ \d+$/;
+        let match = fen.match(fenRegex);
+        if (match[1] == "w") {
+            return COLOR.white;
+        } else if (match[1] == "b") {
+            return COLOR.black;
+        } else {
+            new Error("FEN does not contain whose turn it is in " + element);
+        }
+    default:
+        new Error ("data-orientation must be either 'white', 'black' or 'auto'");
+    }
+}
 
 // var myboard = new Chessboard(document.getElementById("test"), {
 //     assetsUrl: "./",
