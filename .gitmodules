@@ -4,3 +4,12 @@
 [submodule "chess.js"]
 	path = chess.js
 	url = https://github.com/jhlywa/chess.js.git
+[submodule "cm-pgn"]
+	path = cm-pgn
+	url = https://github.com/shaack/cm-pgn.git
+[submodule "cm-chess"]
+	path = cm-chess
+	url = https://github.com/shaack/cm-chess.git
+[submodule "cm-chessboard-playfield"]
+	path = cm-chessboard-playfield
+	url = https://github.com/shaack/cm-chessboard-playfield.git
