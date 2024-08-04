@@ -1,4 +1,9 @@
 import { COLOR, Chessboard, BORDER_TYPE } from "../cm-chessboard/src/Chessboard";
+import {MARKER_TYPE, Markers} from "../cm-chessboard/src/extensions/markers/Markers.js";
+import {PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog} from "../cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
+import {Accessibility} from "../cm-chessboard/src/extensions/accessibility/Accessibility.js";
+import {Chess} from "../chess.js/src/chess.js";
+
 
 function send_to_terminal(m) {
     var myterminal=document.getElementById("myterminal");
@@ -49,6 +54,11 @@ function createBoard(element) {
         position: fen,
         orientation: boardOrientation(element, fen),
         style: { pieces: { file: "_standard.svg", } },
+        extensions: [
+            {class: Markers, props: {autoMarkers: MARKER_TYPE.square}},
+            {class: PromotionDialog},
+            {class: Accessibility, props: {visuallyHidden: true}}
+        ]
     });
 }
 
