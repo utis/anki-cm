@@ -17,7 +17,8 @@ EXTS := markers accessibility promotion-dialog
 exts_js := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/src/extensions/$e/*.js))
 exts_css := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/assets/extensions/$e/*.css))
 exts_svg := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/assets/extensions/$e/*.svg))
-exts_svg_targets := $(EXTS:%=$(DISTDIR)/ankicm-%.svg)
+exts_svg_targets := $(patsubst %,$(DISTDIR)/_ankicm-%,$(notdir $(exts_svg)))
+
 
 .PHONY: test
 
@@ -30,7 +31,7 @@ vpath % $(SRCDIR)
 
 .PHONY: all
 
-all: esbuild $(TARGETS) $(EXTRA_TARGETS)
+all: esbuild $(TARGETS) $(EXTRA_TARGETS) $(exts_svg_targets)
 
 # Main JS target
 $(DISTDIR)/_ankicm.js: ankicm.js
@@ -59,11 +60,16 @@ esbuild: $(NODEDIR)/esbuild
 $(NODEDIR)/esbuild:
 	npm install --save-exact --save-dev esbuild
 
-.PHONY: clean install
+.PHONY: clean install watch
 
 clean:
-	rm -f $(TARGETS) $(EXTRA_TARGETS)
+	rm -f $(DISTDIR)/*
 
 install: $(TARGETS) $(EXTRA_TARGETS)
 	cp -f $^ $(INSTALLDIR)
 
+watch:
+	while true; do \
+          $(MAKE) $(WATCHMAKE); \
+          inotifywait -qre close_write .; \
+        done
