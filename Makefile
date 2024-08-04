@@ -30,29 +30,24 @@ vpath % $(SRCDIR)
 
 .PHONY: all
 
-#all: esbuild $(TARGETS) $(EXTRA_TARGETS)
-all: $(TARGETS) $(EXTRA_TARGETS)
+all: esbuild $(TARGETS) $(EXTRA_TARGETS)
 
 # Main JS target
 $(DISTDIR)/_ankicm.js: ankicm.js
 	./$(NODEDIR)/.bin/esbuild $^ --bundle --minify --outfile=$@
 
+# Main CSS target
+$(DISTDIR)/_ankicm.css: chessboard.css $(exts_css)
+	cat $^ > $@
+
+# SVGs
 $(DISTDIR)/_ankicm-%.svg: %.svg
 	cp -f $< $@
 
-# $(distdir)/_ankicm-standard.svg: standard.svg
-# 	cp -f $< $@
-
-# $(distdir)/_ankicm-staunty.svg: staunty.svg
-# 	cp -f $< $@
-
+# index.html used for prototyping
 $(DISTDIR)/index.html: $(SRCDIR)/index.html
 	cp -f $< $@
 
-# $(distdir)/_chessboard.css: $(cmdir)/assets/chessboard.css
-# 	cp -f $< $@
-$(DISTDIR)/_ankicm.css: chessboard.css $(exts_css)
-	cat $^ > $@
 
 $(CHESSDIR)/chess.js: $(CHESSDIR)/chess.ts
 	cd $(CHESSDIR) && tsc 
