@@ -1,4 +1,4 @@
-import { COLOR, Chessboard, BORDER_TYPE } from "../cm-chessboard/src/Chessboard";
+import { COLOR, INPUT_EVENT_TYPE, Chessboard, BORDER_TYPE } from "../cm-chessboard/src/Chessboard";
 import { MARKER_TYPE, Markers } from "../cm-chessboard/src/extensions/markers/Markers.js";
 import {PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog} from "../cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
 import {Accessibility} from "../cm-chessboard/src/extensions/accessibility/Accessibility.js";
@@ -55,7 +55,8 @@ function createBoard(element) {
         orientation: boardOrientation(element, fen),
         style: { pieces: { file: "_ankicm-standard.svg", } },
         extensions: [
-            {class: Markers, props: {autoMarkers: MARKER_TYPE.square}},
+            {class: Markers, props: {autoMarkers: MARKER_TYPE.square,
+                                     sprite: "_ankicm-markers.svg"}},
             {class: PromotionDialog},
             {class: Accessibility, props: {visuallyHidden: true}}
         ]
@@ -176,8 +177,8 @@ function boardOrientation(element, fen) {
 
     const board = new Chessboard(document.getElementById("myboard"), {
         position: chess.fen(),
-        assetsUrl: "../assets/",
-        style: {borderType: BORDER_TYPE.none, pieces: {file: "pieces/staunty.svg"}, animationDuration: 300},
+        assetsUrl: "./",
+        style: {borderType: BORDER_TYPE.none, pieces: {file: "_ankicm-staunty.svg"}, animationDuration: 300},
         orientation: COLOR.white,
         extensions: [
             {class: Markers, props: {autoMarkers: MARKER_TYPE.square}},
