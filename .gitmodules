@@ -2,14 +2,14 @@
 	path = cm-chessboard
 	url = https://github.com/shaack/cm-chessboard.git
 [submodule "chess.js"]
-	path = chess.js
+	path = lib/chess.js
 	url = https://github.com/jhlywa/chess.js.git
 [submodule "cm-pgn"]
-	path = cm-pgn
+	path = lib/cm-pgn
 	url = https://github.com/shaack/cm-pgn.git
 [submodule "cm-chess"]
-	path = cm-chess
+	path = lib/cm-chess
 	url = https://github.com/shaack/cm-chess.git
 [submodule "cm-chessboard-playfield"]
-	path = cm-chessboard/src/extensions/cm-chessboard-playfield
+	path = lib/cm-chessboard-playfield
 	url = https://github.com/shaack/cm-chessboard-playfield.git
