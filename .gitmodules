@@ -1,3 +1,6 @@
 [submodule "cm-chessboard"]
 	path = cm-chessboard
 	url = https://github.com/shaack/cm-chessboard
+[submodule "chess.js"]
+	path = chess.js
+	url = https://github.com/jhlywa/chess.js.git
