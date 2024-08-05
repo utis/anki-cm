@@ -2,8 +2,8 @@ INSTALLDIR := ~/.local/share/Anki2/Egoge/collection.media/
 
 SRCDIR  := src
 DISTDIR := dist
-CMDIR := cm-chessboard
-CHESSDIR := chess.js
+CMDIR := lib/cm-chessboard
+CHESSDIR := lib/chess.js
 NODEDIR := node_modules
 
 TARGET_FILES := _ankicm.js _ankicm-standard.svg _ankicm-staunty.svg _ankicm.css
@@ -18,7 +18,6 @@ exts_js := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/src/extensions/$e/*.js))
 exts_css := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/assets/extensions/$e/*.css))
 exts_svg := $(foreach e,$(EXTS),$(wildcard $(CMDIR)/assets/extensions/$e/*.svg))
 exts_svg_targets := $(patsubst %,$(DISTDIR)/_ankicm-%,$(notdir $(exts_svg)))
-
 
 .PHONY: test
 
@@ -36,7 +35,7 @@ all: esbuild $(TARGETS) $(EXTRA_TARGETS) $(exts_svg_targets)
 # Main JS target
 # We need only src/ankicm.js. The rest is handled by esbuild from its `import`s.
 $(DISTDIR)/_ankicm.js: ankicm.js Chessboard.js chess.js $(exts_js)
-	./$(NODEDIR)/.bin/esbuild $< --bundle --minify --outfile=$@
+	./$(NODEDIR)/.bin/esbuild $< --bundle --outfile=$@
 
 # Main CSS target
 $(DISTDIR)/_ankicm.css: chessboard.css $(exts_css)
@@ -51,7 +50,7 @@ $(DISTDIR)/index.html: $(SRCDIR)/index.html
 	cp -f $< $@
 
 
-$(CHESSDIR)/chess.js: $(CHESSDIR)/chess.ts
+$(CHESSDIR)/src/chess.js: $(CHESSDIR)/src/chess.ts
 	cd $(CHESSDIR) && tsc 
 
 .PHONY: esbuild
