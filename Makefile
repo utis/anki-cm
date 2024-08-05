@@ -35,7 +35,7 @@ all: esbuild $(TARGETS) $(EXTRA_TARGETS) $(exts_svg_targets)
 # Main JS target
 # We need only src/ankicm.js. The rest is handled by esbuild from its `import`s.
 $(DISTDIR)/_ankicm.js: ankicm.js Chessboard.js chess.js $(exts_js)
-	./$(NODEDIR)/.bin/esbuild $< --bundle --outfile=$@
+	./$(NODEDIR)/.bin/esbuild $< --bundle --sourcemap=inline --outfile=$@
 
 # Main CSS target
 $(DISTDIR)/_ankicm.css: chessboard.css $(exts_css)
