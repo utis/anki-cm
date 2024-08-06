@@ -2,7 +2,7 @@ import { COLOR, Chessboard, BORDER_TYPE, FEN } from "../lib/cm-chessboard/src/Ch
 import { MARKER_TYPE, Markers } from "../lib/cm-chessboard/src/extensions/markers/Markers.js";
 import { Accessibility } from "../lib/cm-chessboard/src/extensions/accessibility/Accessibility.js";
 import { PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog } from "../lib/cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
-
+import { Chess } from "../lib/chess.js/src/chess.js";
 
 function cmStart() {
     let boards = document.getElementsByClassName("cm-board");
@@ -41,6 +41,7 @@ function createSimpleBoard(element,
         extensions: [
             {class: Markers, props: {autoMarkers: MARKER_TYPE.square,
                                      sprite: "_ankicm-markers.svg"}},
+
             {class: PromotionDialog},
             {class: Accessibility, props: {visuallyHidden: true}}
         ],
@@ -48,18 +49,21 @@ function createSimpleBoard(element,
 }
 
 
-// function createInteractiveBoard(element, fen=false) {
-//     const board = createSimpleBoard(element, fen);
-//     console.log(board);
-//     board.props.chessgame = fen ? new Chess(fen) : new Chess();
+function createInteractiveBoard(element, fen=false) {
+    // Not using FEN.empty (of cm-chessboard) as default here, because
+    // Chess.js accepts only valid FEN denoting valid board
+    // positions. FEN.empty is neither.
+    const chessgame = fen ? new Chess(fen) : new Chess();
+    const board = createSimpleBoard(element, chessgame.fen());
+    board.props.chessgame = chessgame;
 
-//     // board.enableMoveInput(inputHandler, COLOR.white)
-//     return board;
-// }
+    // board.enableMoveInput(inputHandler, COLOR.white)
+    return board;
+}
 
 
-// const myboard = createInteractiveBoard(document.getElementById("myboard"));
-// console.log(myboard);
+const myboard = createInteractiveBoard(document.getElementById("myboard"));
+console.log(myboard);
 
 
 function boardOrientation(element, fen) {
@@ -85,5 +89,3 @@ function boardOrientation(element, fen) {
         new Error ("data-orientation must be either 'white', 'black' or 'auto'");
     }
 }
-
-
