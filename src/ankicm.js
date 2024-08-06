@@ -1,4 +1,4 @@
-import { COLOR, Chessboard, BORDER_TYPE } from "../lib/cm-chessboard/src/Chessboard";
+import { COLOR, Chessboard, BORDER_TYPE, FEN } from "../lib/cm-chessboard/src/Chessboard";
 import { MARKER_TYPE, Markers } from "../lib/cm-chessboard/src/extensions/markers/Markers.js";
 import { Accessibility } from "../lib/cm-chessboard/src/extensions/accessibility/Accessibility.js";
 import { PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog } from "../lib/cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
@@ -26,11 +26,11 @@ function createBoard(element) {
 }
 
 
-const emptyFen = "8/8/8/8/8/8/8/8";
+// const emptyFen = "8/8/8/8/8/8/8/8";
 
 
 function createSimpleBoard(element,
-                           fen=emptyFen,
+                           fen=FEN.empty,
                            orientation=false) {
     return new Chessboard(element, {
         assetsUrl: "./",
