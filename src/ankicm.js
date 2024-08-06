@@ -21,12 +21,9 @@ function createBoard(element) {
 
     // Remove FEN string from page.
     element.innerHTML = "";
-//    createSimpleBoard(element, fen, orientation);
-     console.log(createSimpleBoard(element, fen, orientation));
+    return createSimpleBoard(element, fen, orientation);
+    // console.log(createSimpleBoard(element, fen, orientation));
 }
-
-
-// const emptyFen = "8/8/8/8/8/8/8/8";
 
 
 function createSimpleBoard(element,
@@ -35,7 +32,7 @@ function createSimpleBoard(element,
     return new Chessboard(element, {
         assetsUrl: "./",
         position: fen,
-        orientation: orientation || boardOrientation(element, fen),
+        orientation: orientation || COLOR.white,
         style: {
             borderType: BORDER_TYPE.none,
             pieces: { file: "_ankicm-standard.svg" },
