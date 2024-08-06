@@ -1,59 +1,60 @@
 import { COLOR, INPUT_EVENT_TYPE, Chessboard } from "../lib/cm-chessboard/src/Chessboard";
 import { Chess } from "../lib/chess.js/src/chess.js";
+import { MARKER_TYPE, Markers } from "../lib/cm-chessboard/src/extensions/markers/Markers.js";
 
-import { Extension } from "cm-chessboard/src/model/Extension.js"
-import { Observed } from "cm-web-modules/src/observed/Observed.js"
+//import { Extension } from "cm-chessboard/src/model/Extension.js"
+//import { Observed } from "cm-web-modules/src/observed/Observed.js"
 
 
-export class Playfield extends Extension {
+// export class Playfield extends Extension {
 
-    constructor(chessboard, props = {}) {
-        super(chessboard)
-        this.props = {
-            playerColor: COLOR.white,
-            player: undefined,
-            opponent: undefined
-        }
-        Object.assign(this.props, props)
-        this.state = new Observed({
-            chess: new Chess(chessboard.props.position),
-            moveShown: null,
-            player: new this.props.player.type(this, this.props.player.name, this.props.player.props),
-            opponent: new this.props.opponent.type(this, this.props.opponent.name, this.props.opponent.props)
-        })
-        this.state.addObserver(() => {
-            this.chessboard.setPosition(this.state.moveShown.fen, true)
-        }, ["moveShown"])
-        this.nextMove()
-    }
+//     constructor(chessboard, props = {}) {
+//         super(chessboard)
+//         this.props = {
+//             playerColor: COLOR.white,
+//             player: undefined,
+//             opponent: undefined
+//         }
+//         Object.assign(this.props, props)
+//         this.state = new Observed({
+//             chess: new Chess(chessboard.props.position),
+//             moveShown: null,
+//             player: new this.props.player.type(this, this.props.player.name, this.props.player.props),
+//             opponent: new this.props.opponent.type(this, this.props.opponent.name, this.props.opponent.props)
+//         })
+//         this.state.addObserver(() => {
+//             this.chessboard.setPosition(this.state.moveShown.fen, true)
+//         }, ["moveShown"])
+//         this.nextMove()
+//     }
 
-    playerToMove() {
-        return this.state.chess.turn() === this.props.playerColor ? this.state.player : this.state.opponent
-    }
+//     playerToMove() {
+//         return this.state.chess.turn() === this.props.playerColor ? this.state.player : this.state.opponent
+//     }
 
-    nextMove() {
-        const playerToMove = this.playerToMove()
-        if (playerToMove) {
-            playerToMove.moveRequest(this.handleMoveResponse.bind(this))
-        }
-    }
+//     nextMove() {
+//         const playerToMove = this.playerToMove()
+//         if (playerToMove) {
+//             playerToMove.moveRequest(this.handleMoveResponse.bind(this))
+//         }
+//     }
 
-    handleMoveResponse(move) {
-        const moveResult = this.state.chess.move(move)
-        if (!moveResult) {
-            console.error("illegalMove", this.state.chess, move)
-            return moveResult
-        }
-        if (this.state.moveShown === this.state.chess.lastMove().previous) {
-            this.state.moveShown = this.state.chess.lastMove()
-        }
-        if (!this.state.chess.gameOver()) {
-            this.nextMove()
-        }
-        return moveResult
-    }
+//     handleMoveResponse(move) {
+//         const moveResult = this.state.chess.move(move)
+//         if (!moveResult) {
+//             console.error("illegalMove", this.state.chess, move)
+//             return moveResult
+//         }
+//         if (this.state.moveShown === this.state.chess.lastMove().previous) {
+//             this.state.moveShown = this.state.chess.lastMove()
+//         }
+//         if (!this.state.chess.gameOver()) {
+//             this.nextMove()
+//         }
+//         return moveResult
+//     }
 
-}
+// }
 
 
 // let seed = 71;
@@ -100,17 +101,24 @@ export class Playfield extends Extension {
 //     }
 // }
 
+
 // Shamelessly copied from cm-chessboard's website.
-function inputHandler(event) {
+export function inputHandler(event) {
     console.log("inputHandler", event)
+
+    const chess = event.chessboard.props.chessgame;
+
     if(event.type === INPUT_EVENT_TYPE.movingOverSquare) {
+        console.log("--> Moving over square");
         return // ignore this event
     }
     if(event.type !== INPUT_EVENT_TYPE.moveInputFinished) {
+        console.log("--> Move input finished");
         event.chessboard.removeMarkers(MARKER_TYPE.dot)
         event.chessboard.removeMarkers(MARKER_TYPE.bevel)
     }
     if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
+        console.log("--> Move input started");
         const moves = chess.moves({square: event.squareFrom, verbose: true})
         for (const move of moves) { // draw dots on possible squares
             if (move.promotion && move.promotion !== "q") {
@@ -124,6 +132,7 @@ function inputHandler(event) {
         }
         return moves.length > 0
     } else if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
+        console.log("--> Validate move input");
         const move = {from: event.squareFrom, to: event.squareTo, promotion: event.promotion}
         const result = chess.move(move)
         if (result) {
@@ -133,6 +142,7 @@ function inputHandler(event) {
                 })
             })
         } else {
+            console.log("--> What else?");
             // promotion?
             let possibleMoves = chess.moves({square: event.squareFrom, verbose: true})
             for (const possibleMove of possibleMoves) {
@@ -155,6 +165,7 @@ function inputHandler(event) {
         }
         return result
     } else if (event.type === INPUT_EVENT_TYPE.moveInputFinished) {
+        console.log("--> Move input finished.");
         if(event.legalMove) {
             event.chessboard.disableMoveInput()
         }

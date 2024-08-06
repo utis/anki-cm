@@ -3,6 +3,8 @@ import { MARKER_TYPE, Markers } from "../lib/cm-chessboard/src/extensions/marker
 import { Accessibility } from "../lib/cm-chessboard/src/extensions/accessibility/Accessibility.js";
 import { PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog } from "../lib/cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
 import { Chess } from "../lib/chess.js/src/chess.js";
+import { inputHandler } from "./queryboard.js";
+
 
 function cmStart() {
     let boards = document.getElementsByClassName("cm-board");
@@ -18,21 +20,30 @@ window.onload = cmStart()
 function createBoard(element) {
     const fen = element.textContent.trim();
     const orientation = boardOrientation(element, fen);
+    const type = element.dataset.type || 'simple';
 
     // Remove FEN string from page.
     element.innerHTML = "";
-    return createSimpleBoard(element, fen, orientation);
+    switch (type) {
+    case 'default':
+    case 'simple':
+        return createSimpleBoard(element, fen, orientation);
+    case 'interactive':
+    case 'query':
+        return createInteractiveBoard(element, fen, orientation);
+    }
+    return 
     // console.log(createSimpleBoard(element, fen, orientation));
 }
 
 
 function createSimpleBoard(element,
                            fen=FEN.empty,
-                           orientation=false) {
+                           orientation=COLOR.white) {
     return new Chessboard(element, {
         assetsUrl: "./",
         position: fen,
-        orientation: orientation || COLOR.white,
+        orientation: orientation,
         style: {
             borderType: BORDER_TYPE.none,
             pieces: { file: "_ankicm-standard.svg" },
@@ -49,21 +60,23 @@ function createSimpleBoard(element,
 }
 
 
-function createInteractiveBoard(element, fen=false) {
+function createInteractiveBoard(element, fen=false, orientation=COLOR.white) {
     // Not using FEN.empty (of cm-chessboard) as default here, because
     // Chess.js accepts only valid FEN denoting valid board
     // positions. FEN.empty is neither.
     const chessgame = fen ? new Chess(fen) : new Chess();
-    const board = createSimpleBoard(element, chessgame.fen());
-    board.props.chessgame = chessgame;
+    const board = createSimpleBoard(element, chessgame.fen(), orientation);
+    board.enableMoveInput(inputHandler, chessgame.turn());
 
-    // board.enableMoveInput(inputHandler, COLOR.white)
     return board;
 }
 
 
-const myboard = createInteractiveBoard(document.getElementById("myboard"));
-console.log(myboard);
+const myboard = createInteractiveBoard(document.getElementById("myboard"),
+                                       "r4rk1/pb1n1pp1/1p1Bp2p/3n4/3P4/P3PP2/1P4PP/R3KBNR b KQ - 2 14",
+                                      COLOR.black);
+// const myboard = createInteractiveBoard(document.getElementById("myboard"));
+// console.log(myboard);
 
 
 function boardOrientation(element, fen) {
