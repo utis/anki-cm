@@ -2,81 +2,69 @@ import { COLOR, Chessboard, BORDER_TYPE, FEN } from "../lib/cm-chessboard/src/Ch
 import { MARKER_TYPE, Markers } from "../lib/cm-chessboard/src/extensions/markers/Markers.js";
 import { Accessibility } from "../lib/cm-chessboard/src/extensions/accessibility/Accessibility.js";
 import { PROMOTION_DIALOG_RESULT_TYPE, PromotionDialog } from "../lib/cm-chessboard/src/extensions/promotion-dialog/PromotionDialog.js";
-import { Chess } from "../lib/chess.js/src/chess.js";
-import { inputHandler } from "./queryboard.js";
 
+import AnkiQuery from "./queryboard.js";
 
-function cmStart() {
+export default function cmStart() {
     let boards = document.getElementsByClassName("cm-board");
 
     for (element of boards) {
-        createBoard(element);
+       createBoard(element);
     }
 }
 
-window.onload = cmStart()
+
+var myboards;
+
+const defaultBoardProps = {
+    assetsUrl: "./", // No subdirs on Anki on iPhone.
+    style: {
+        borderType: BORDER_TYPE.none,
+        pieces: { file: "_ankicm-standard.svg" }, // There's also _ankicm-staunty.svg
+        // animationDuration: 300,
+    },
+};
+
+const defaultBoardExtensions = [
+    { class: Markers, props: { autoMarkers: MARKER_TYPE.square,
+                               sprite: "_ankicm-markers.svg"
+                             }},
+    { class: PromotionDialog },
+    { class: Accessibility, props: { visuallyHidden: true }}
+];
+
+
+const interactiveBoardExtensions = [ 
+    { class: AnkiQuery },
+    ...defaultBoardExtensions 
+];
 
 
 function createBoard(element) {
-    const fen = element.textContent.trim();
+    const fen =
+          (element.textContent.trim() != "")
+          ? element.textContent.trim()
+          : false // FIXME: Sensible default?
+    ;
+    
     const orientation = boardOrientation(element, fen);
     const type = element.dataset.type || 'simple';
 
-    // Remove FEN string from page.
-    element.innerHTML = "";
-    switch (type) {
-    case 'default':
-    case 'simple':
-        return createSimpleBoard(element, fen, orientation);
-    case 'interactive':
-    case 'query':
-        return createInteractiveBoard(element, fen, orientation);
-    }
-    return 
-    // console.log(createSimpleBoard(element, fen, orientation));
-}
+    const extensions =
+        (element.dataset.type == 'query')
+        ? interactiveBoardExtensions
+        : defaultBoardExtensions
+    ;
 
-
-function createSimpleBoard(element,
-                           fen=FEN.empty,
-                           orientation=COLOR.white) {
-    return new Chessboard(element, {
-        assetsUrl: "./",
-        position: fen,
-        orientation: orientation,
-        style: {
-            borderType: BORDER_TYPE.none,
-            pieces: { file: "_ankicm-standard.svg" },
-            // animationDuration: 300,
-        },
-        extensions: [
-            {class: Markers, props: {autoMarkers: MARKER_TYPE.square,
-                                     sprite: "_ankicm-markers.svg"}},
-
-            {class: PromotionDialog},
-            {class: Accessibility, props: {visuallyHidden: true}}
-        ],
+    const board = new Chessboard(element, {
+            position: fen,
+            orientation: orientation,
+            extensions: extensions,
+            ...defaultBoardProps,
     });
-}
-
-
-function createInteractiveBoard(element, fen=false, orientation=COLOR.white) {
-    // Not using FEN.empty (of cm-chessboard) as default here, because
-    // Chess.js accepts only valid FEN denoting valid board
-    // positions. FEN.empty is neither.
-    const chessgame = fen ? new Chess(fen) : new Chess();
-    const board = createSimpleBoard(element, chessgame.fen(), orientation);
-    board.enableMoveInput(inputHandler, chessgame.turn());
 
     return board;
 }
-
-
-const myboard = createInteractiveBoard(document.getElementById("myboard"),
-                                       "r4rk1/pb1n1pp1/1p1Bp2p/3n4/3P4/P3PP2/1P4PP/R3KBNR b KQ - 2 14",
-                                      COLOR.black);
-// const myboard = createInteractiveBoard(document.getElementById("myboard"));
-// console.log(myboard);
 
 
 function boardOrientation(element, fen) {
@@ -102,3 +90,5 @@ function boardOrientation(element, fen) {
         new Error ("data-orientation must be either 'white', 'black' or 'auto'");
     }
 }
+
+window.onload = cmStart()
